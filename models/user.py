@@ -9,5 +9,5 @@ class User(Base):
     
     Id = Colum(Integer, primary_key=True, index=True)
     Rol_Id = Colum(Integer, ForeignKey("tbc_roles.Id"))
-    Nombre = Colum()
+    Nombre = Colum(String(15))
     
