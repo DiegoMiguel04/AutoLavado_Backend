@@ -4,8 +4,10 @@ from config.db import Base
 
 class Rol(Base):
     '''Clase para especificar tabla de roles de usuarios'''
-    __tablename__ = "tbc_roles"
+    __tablename__ = "tbc_rol"
     
     Id = Colum(Integer, primary_key=True, index=True)
-    nombreRol = Colum(String(15))
+    nombre_rol = Colum(String(15))
     estado = Colum(Boolean)
+    fecha_registro = Colum(DateTime)
+    fecha_actualizacion = Colum(DateTime)
