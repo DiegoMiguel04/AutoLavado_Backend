@@ -18,15 +18,15 @@ class UsuarioBase(BaseModel):
 
 #pylint: disable=too-public-methods, unnecesary-pass
 class UsuarioCreate(UsuarioBase):
-    '''Clase para crear un Rol basado en la tabla Rol'''
+    '''Clase para crear un Usuario basado en la tabla Usuario'''
     pass
 
 class UsuarioUpdate(UsuarioBase):
-    '''Clase para actualizar un Rol basado en la tabla Rol'''
+    '''Clase para actualizar un Usuario basado en la tabla Usuario'''
     pass
 
 class Usuario(UsuarioBase):
-    '''Clase para realizar operaciones por ID en tabla Rol'''
+    '''Clase para realizar operaciones por ID en tabla Usuario'''
     id: int
     class Config:
         '''Utilizar el orm para ejecutar las funcionalidades'''
