@@ -1,15 +1,10 @@
-from fastapi import APIRouter, Depends
-from typing import List
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-
-import schemas.schema_rol
-import crud.crud_rol
+import crud.crud_rol as crud
+import schemas.schema_rol as schema
 import config.db
-import models.model_rol
 
-rol = APIRouter()
-
-models.model_rol.Base.metadata.create_all(bind=config.db.engine)
+router = APIRouter(prefix="/roles", tags=["Roles"])
 
 def get_db():
     db = config.db.SessionLocal()
@@ -18,15 +13,31 @@ def get_db():
     finally:
         db.close()
 
-@rol.get(
-    "/roles/",
-    response_model=List[schemas.schema_rol.Rol],
-    tags=["Roles"]
-)
-async def read_roles(
-    skip: int = 0,
-    limit: int = 100,
-    db: Session = Depends(get_db)
-):
-    db_rol = crud.crud_rol.get_rol(db=db, skip=skip, limit=limit)
-    return db_rol
+@router.get("/", response_model=list[schema.Rol])
+def listar_roles(db: Session = Depends(get_db)):
+    return crud.get_roles(db)
+
+@router.get("/{rol_id}", response_model=schema.Rol)
+def obtener_rol(rol_id: int, db: Session = Depends(get_db)):
+    rol = crud.get_rol_by_id(db, rol_id)
+    if not rol:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    return rol
+
+@router.post("/", response_model=schema.Rol)
+def crear_rol(data: schema.RolCreate, db: Session = Depends(get_db)):
+    return crud.create_rol(db, data)
+
+@router.put("/{rol_id}", response_model=schema.Rol)
+def actualizar_rol(rol_id: int, data: schema.RolUpdate, db: Session = Depends(get_db)):
+    rol = crud.update_rol(db, rol_id, data)
+    if not rol:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    return rol
+
+@router.delete("/{rol_id}")
+def eliminar_rol(rol_id: int, db: Session = Depends(get_db)):
+    rol = crud.delete_rol(db, rol_id)
+    if not rol:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    return {"mensaje": "Rol eliminado correctamente"}

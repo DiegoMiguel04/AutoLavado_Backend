@@ -6,7 +6,9 @@ Diego Miguel Rivera Chávez
 
     venv\Scripts\activate
 
-    pip install fastapi uvicorn pylint sqlalchemy
+    pip install fastapi uvicorn pylint sqlalchemy python-jose[cryptography] passlib
+
+    pip install -r requirements.txt
 
     uvicorn main:app --reload
 

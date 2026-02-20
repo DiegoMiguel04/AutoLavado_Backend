@@ -1,7 +1,7 @@
 '''Esta clase permite generar el modelo de los autos'''
-from sqlalchemy import Colum, Integer, String, Boolean, Date, DateTime, Time, Enum, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Boolean, DateTime, Time, Enum, DateTime, ForeignKey
 from config.db import Base
+from datetime import datetime
 
 class Estatus(Enum):
     Programado = "Programado"
@@ -12,15 +12,19 @@ class VehiculoServicio(Base):
     '''Clase para especificar la tabla de autos'''
     __tablename__ = "tbd_vehiculos_servicios_usuario"
 
-    Id = Colum(Integer, primary_key=True, index=True)
-    vehiculo_id = Colum(Integer, ForeignKey("tbb_usuarios.Id"))
-    cajero_Id = Colum(Integer, ForeignKey("tbb_vehiculos.Id"))
-    operador_Id = Colum(Integer, ForeignKey("tbb_usuarios.Id"))
-    servicio_Id = Colum(Integer, ForeignKey("tbc_servicios.Id"))
-    fecha = Colum(Date)
-    hora = Colum(Time)
-    estatus = Colum(Enum(Estatus), default=Estatus.Programado)
-    estado = Colum(Boolean)
-    fecha_registro = Colum(DateTime)
-    fecha_actualizacion = Colum(DateTime)
+    Id = Column("Id", Integer, primary_key=True, index=True)
+    vehiculo_id = Column(Integer, ForeignKey("tbb_usuarios.Id"))
+    cajero_Id = Column(Integer, ForeignKey("tbb_vehiculos.Id"))
+    operador_Id = Column(Integer, ForeignKey("tbb_usuarios.Id"))
+    servicio_Id = Column(Integer, ForeignKey("tbc_servicios.Id"))
+    fecha = Column(DateTime)
+    hora = Column(Time)
+    estatus = Column(Boolean, default=True)
+
+    fecha_registro = Column(DateTime, default=datetime.utcnow)
+    fecha_actualizacion = Column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow
+    )
     
