@@ -8,7 +8,7 @@ class User(Base):
     __tablename__ = "tbb_auto"
     
     Id = Column(Integer, primary_key=True, index=True)
-    usuario_id = Column(Integer, ForeignKey("tbb_usuarios.Id"))
+    usuario_id = Column("usuario_Id", Integer, ForeignKey("tbb_usuarios.Id"))
     marca = Column(String(60), nullable=False)
     modelo = Column(String(10), nullable=False)
     placa = Column(String(10), nullable=False, unique=True)

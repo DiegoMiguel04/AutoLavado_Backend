@@ -1,28 +1,44 @@
-''' Docstring for schemas.schema_rol'''
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import datetime, time
 
-class RolBase(BaseModel):
-    '''Clase para modelar los campos de la tabla Rol'''
-    fecha: date
+
+''' Modelo base para la tabla AutoServicio que relaciona vehículos, cajeros, operadores y servicios '''
+class AutoServicioBase(BaseModel):
+    vehiculo_id: int
+    cajero_id: int
+    operador_id: int
+    servicio_id: int
+    fecha: datetime
     hora: time
-    estatus: str
-    estado: str
+    estatus: bool = True
+
+
+''' Modelo utilizado para la creación de un nuevo registro de AutoServicio '''
+class AutoServicioCreate(BaseModel):
+    vehiculo_id: int
+    cajero_id: int
+    operador_id: int
+    servicio_id: int
+    fecha: datetime
+    hora: time
+
+
+''' Modelo utilizado para la actualización de un registro existente de AutoServicio '''
+class AutoServicioUpdate(BaseModel):
+    vehiculo_id: int | None = None
+    cajero_id: int | None = None
+    operador_id: int | None = None
+    servicio_id: int | None = None
+    fecha: datetime | None = None
+    hora: time | None = None
+    estatus: bool | None = None
+
+
+''' Modelo completo de AutoServicio que se utiliza para las respuestas de la API '''
+class AutoServicio(AutoServicioBase):
+    id: int
     fecha_registro: datetime
     fecha_actualizacion: datetime
 
-#pylint: disable=too-public-methods, unnecesary-pass
-class RolCreate(RolBase):
-    '''Clase para crear un Rol basado en la tabla Rol'''
-    pass
-
-class RolUpdate(RolBase):
-    '''Clase para actualizar un Rol basado en la tabla Rol'''
-    pass
-
-class Rol(RolBase):
-    '''Clase para realizar operaciones por ID en tabla Rol'''
-    id: int
     class Config:
-        '''Utilizar el orm para ejecutar las funcionalidades'''
         orm_mode = True

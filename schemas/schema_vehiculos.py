@@ -1,33 +1,49 @@
-''' Docstring for schemas.schema_vehiculo'''
-from typing import Optional
-from datetime import datetime
 from pydantic import BaseModel
+from datetime import datetime
 
+''' Modelo base para la tabla de vehículos '''
 class VehiculoBase(BaseModel):
-    '''Clase para modelar los campos de la tabla Vehiculo'''
-    marca: str
+    usuario_id: int
     modelo: str
+    marca: str
     placa: str
-    serie: str
-    color: str
-    tipo: str
-    anio: str
-    estatus: bool
+    serie: str | None = None
+    color: str | None = None
+    tipo: str | None = None
+    anio: int | None = None
+    estatus: bool = True
+
+
+''' Modelo utilizado para la creación de un nuevo vehículo '''
+class VehiculoCreate(BaseModel):
+    usuario_id: int
+    modelo: str
+    marca: str
+    placa: str
+    serie: str | None = None
+    color: str | None = None
+    tipo: str | None = None
+    anio: int | None = None
+
+
+''' Modelo utilizado para la actualización de un vehículo existente '''
+class VehiculoUpdate(BaseModel):
+    usuario_id: int | None = None
+    modelo: str | None = None
+    marca: str | None = None
+    placa: str | None = None
+    serie: str | None = None
+    color: str | None = None
+    tipo: str | None = None
+    anio: int | None = None
+    estatus: bool | None = None
+
+
+''' Modelo completo de Vehículo que se utiliza para las respuestas de la API '''
+class Vehiculo(VehiculoBase):
+    id: int
     fecha_registro: datetime
     fecha_actualizacion: datetime
 
-#pylint: disable=too-public-methods, unnecesary-pass
-class VehiculoCreate(VehiculoBase):
-    '''Clase para crear un Vehiculo basado en la tabla Vehiculo'''
-    pass
-
-class VehiculoUpdate(VehiculoBase):
-    '''Clase para actualizar un Vehiculo basado en la tabla Vehiculo'''
-    pass
-
-class Vehiculo(VehiculoBase):
-    '''Clase para realizar operaciones por ID en tabla Vehiculo'''
-    id: int
     class Config:
-        '''Utilizar el orm para ejecutar las funcionalidades'''
         orm_mode = True

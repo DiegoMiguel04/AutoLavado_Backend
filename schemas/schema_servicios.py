@@ -16,15 +16,24 @@ class ServicioBase(BaseModel):
 #pylint: disable=too-public-methods, unnecesary-pass
 class ServicioCreate(ServicioBase):
     '''Clase para crear un Servicio basado en la tabla Servicio'''
-    pass
+    nombre: str
+    descripcion: str | None = None
+    costo: float
+    duracion: int | None = None
 
 class ServicioUpdate(ServicioBase):
     '''Clase para actualizar un Servicio basado en la tabla Servicio'''
-    pass
+    nombre: str | None = None
+    descripcion: str | None = None
+    costo: float | None = None
+    duracion: int | None = None
+    estado: bool | None = None
 
 class Servicio(ServicioBase):
     '''Clase para realizar operaciones por ID en tabla Servicio'''
-    id: int
+    Id: int
+    fecha_registro: datetime
+    fecha_actualizacion: datetime
     class Config:
         '''Utilizar el orm para ejecutar las funcionalidades'''
         orm_mode = True

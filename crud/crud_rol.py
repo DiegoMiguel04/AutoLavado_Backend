@@ -1,17 +1,20 @@
 import models.model_rol as model
 from sqlalchemy.orm import Session
 
+''' Obtiene una lista paginada de todos los roles de la base de datos '''
 def get_roles(db: Session, skip: int = 0, limit: int = 100):
     return db.query(model.Rol)\
         .offset(skip)\
         .limit(limit)\
         .all()
 
+''' Busca y retorna un rol específico por su ID '''
 def get_rol_by_id(db: Session, rol_id: int):
     return db.query(model.Rol)\
         .filter(model.Rol.Id == rol_id)\
         .first()
 
+''' Crea un nuevo rol en la base de datos '''
 def create_rol(db: Session, data):
     nuevo = model.Rol(**data.dict())
     db.add(nuevo)
@@ -19,6 +22,7 @@ def create_rol(db: Session, data):
     db.refresh(nuevo)
     return nuevo
 
+''' Actualiza los datos de un rol existente '''
 def update_rol(db: Session, rol_id: int, data):
     rol = get_rol_by_id(db, rol_id)
     if not rol:
@@ -31,6 +35,7 @@ def update_rol(db: Session, rol_id: int, data):
     db.refresh(rol)
     return rol
 
+''' Elimina un rol de la base de datos '''
 def delete_rol(db: Session, rol_id: int):
     rol = get_rol_by_id(db, rol_id)
     if not rol:

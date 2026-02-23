@@ -5,35 +5,88 @@ from pydantic import BaseModel
 
 class UsuarioBase(BaseModel):
     '''Clase para modelar los campos de la tabla Usuario'''
+    rol_id: int
     nombre: str
     primer_apellido: str
-    segundo_apellido: str
-    direccion: str
-    correo_electronico: str
-    numero_telefono: str
-    contrasena: str
-    estatus: bool
-    fecha_registro: datetime
-    fecha_actualizacion: datetime
+    segundo_apellido: str | None = None
+    direccion: str | None = None
+    correo_electronico: EmailStr
+    numero_telefono: str | None = None
+    estatus: bool = True
 
 #pylint: disable=too-public-methods, unnecesary-pass
 class UsuarioCreate(UsuarioBase):
     '''Clase para crear un Usuario basado en la tabla Usuario'''
-    pass
+    rol_id: int
+    nombre: str
+    primer_apellido: str
+    segundo_apellido: str | None = None
+    direccion: str | None = None
+    correo_electronico: EmailStr
+    numero_telefono: str | None = None
+    contrasena: str
 
 class UsuarioUpdate(UsuarioBase):
     '''Clase para actualizar un Usuario basado en la tabla Usuario'''
-    pass
+    rol_id: int | None = None
+    nombre: str | None = None
+    primer_apellido: str | None = None
+    segundo_apellido: str | None = None
+    direccion: str | None = None
+    correo_electronico: EmailStr | None = None
+    numero_telefono: str | None = None
+    estatus: bool | None = None
+    contrasena: str | None = None
 
 class Usuario(UsuarioBase):
     '''Clase para realizar operaciones por ID en tabla Usuario'''
     id: int
+    fecha_registro: datetime
+    fecha_actualizacion: datetime
+
     class Config:
         '''Utilizar el orm para ejecutar las funcionalidades'''
-        orm_mode = True
+        from pydantic import BaseModel, EmailStr
+        from datetime import datetime
+    
+        class UsuarioBase(BaseModel):
+                rol_id: int
+                nombre: str
+                primer_apellido: str
+                segundo_apellido: str | None = None
+                direccion: str | None = None
+                correo_electronico: EmailStr
+                numero_telefono: str | None = None
+                estatus: bool = True
 
-class UsuarioLogin(BaseModel):
-    '''Clase para realizar login por numero de telefono o correo'''
-    numero_telefono: Optional[str] = None 
-    correo_electronico: Optional[str] = None 
-    contrasena: str 
+
+            class UsuarioCreate(BaseModel):
+                rol_id: int
+                nombre: str
+                primer_apellido: str
+                segundo_apellido: str | None = None
+                direccion: str | None = None
+                correo_electronico: EmailStr
+                numero_telefono: str | None = None
+                contrasena: str
+
+
+            class UsuarioUpdate(BaseModel):
+                rol_id: int | None = None
+                nombre: str | None = None
+                primer_apellido: str | None = None
+                segundo_apellido: str | None = None
+                direccion: str | None = None
+                correo_electronico: EmailStr | None = None
+                numero_telefono: str | None = None
+                estatus: bool | None = None
+                contrasena: str | None = None
+
+
+            class Usuario(UsuarioBase):
+                id: int
+                fecha_registro: datetime
+                fecha_actualizacion: datetime
+
+                class Config:
+                    orm_mode = True

@@ -9,17 +9,17 @@ from passlib.exc import UnknownHashError
 class User(Base):
     '''Clase para especificar la tabla de usuarios'''
     __tablename__ = "tbb_usuarios"
-    
     Id = Column(Integer, primary_key=True, index=True)
     rol_Id = Column("rol_Id", Integer, ForeignKey("tbc_roles.Id"))
-    nombre = Column(String(60))
-    primer_apellido = Column(String(60))
-    segundo_apellido = Column(String(60))
-    direccion = Column(String(200))
-    correo_electronico = Column(String(100))
-    numero_telefono = Column(String(20))
-    contrasena = Column(String(40))
-    estatus = Column(Boolean)
+
+    nombre = Column(String(60), nullable=False)
+    primer_apellido = Column(String(60), nullable=False)
+    segundo_apellido = Column(String(60), nullable=False)
+    direccion = Column(String(200), nullable=False)
+    correo_electronico = Column(String(100), nullable=False)
+    numero_telefono = Column(String(20), nullable=False)
+    contrasena = Column(String(40), nullable=False)
+    estatus = Column(Boolean, default=True)
     fecha_registro = Column(DateTime)
     fecha_actualizacion = Columnn(
         DateTime,
