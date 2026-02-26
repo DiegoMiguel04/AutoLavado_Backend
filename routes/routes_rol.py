@@ -1,56 +1,46 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
-import crud.crud_rol as crud
-import schemas.schema_rol as schema
-import config.db
+import crud.crud_rol, config.db, schemas.schema_rol, models.model_rol
+from typing import List
+from config.security import get_current_user
 
-# Crea un router de FastAPI para manejar todas las rutas relacionadas con roles
-router = APIRouter(prefix="/roles", tags=["Roles"])
+rol = APIRouter()
 
+models.model_rol.Base.metadata.create_all(bind=config.db.engine)
 
-''' Obtiene una sesión de base de datos y la cierra automáticamente después de usarla '''
 def get_db():
     db = config.db.SessionLocal()
     try:
         yield db
     finally:
         db.close()
+        
+@rol.get("/rol/", response_model=List[schemas.schema_rol.Rol], tags=["Roles"])
+async def read_rols(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_rol= crud.crud_rol.get_rol(db=db, skip=skip, limit=limit)
+    return db_rol
 
 
-''' Endpoint GET /roles - Obtiene una lista de todos los roles registrados '''
-@router.get("/", response_model=list[schema.Rol])
-def listar_roles(db: Session = Depends(get_db)):
-    return crud.get_roles(db)
+@rol.post("/rol/", response_model=schemas.schema_rol.Rol, tags=["Roles"])
+def create_rol(rol: schemas.schema_rol.RolCreate, db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)):
+    db_rol = crud.crud_rol.get_rol_by_nombre(db, nombre_rol=rol.nombre_rol)
+    if db_rol:
+        raise HTTPException(status_code=400, detail="Rol existente intenta nuevamente")
+    return crud.crud_rol.create_rol(db=db, rol=rol)
 
+@rol.put("/rol/{id}", response_model=schemas.schema_rol.Rol, tags=["Roles"])
+async def update_rol(id: int, rol: schemas.schema_rol.RolUpdate, db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)):
+    db_rol = crud.crud_rol.update_rol(db=db, id=id, rol=rol)
+    if db_rol is None:
+        raise HTTPException(status_code=404, detail="Rol no existe, no actualizado")
+    return db_rol
 
-''' Endpoint GET /roles/{rol_id} - Obtiene un rol específico por su ID '''
-@router.get("/{rol_id}", response_model=schema.Rol)
-def obtener_rol(rol_id: int, db: Session = Depends(get_db)):
-    rol = crud.get_rol_by_id(db, rol_id)
-    if not rol:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return rol
-
-
-''' Endpoint POST /roles - Crea un nuevo rol con los datos proporcionados '''
-@router.post("/", response_model=schema.Rol)
-def crear_rol(data: schema.RolCreate, db: Session = Depends(get_db)):
-    return crud.create_rol(db, data)
-
-
-''' Endpoint PUT /roles/{rol_id} - Actualiza un rol existente por su ID '''
-@router.put("/{rol_id}", response_model=schema.Rol)
-def actualizar_rol(rol_id: int, data: schema.RolUpdate, db: Session = Depends(get_db)):
-    rol = crud.update_rol(db, rol_id, data)
-    if not rol:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return rol
-
-
-''' Endpoint DELETE /roles/{rol_id} - Elimina un rol específico por su ID '''
-@router.delete("/{rol_id}")
-def eliminar_rol(rol_id: int, db: Session = Depends(get_db)):
-    rol = crud.delete_rol(db, rol_id)
-    if not rol:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    return {"mensaje": "Rol eliminado correctamente"}
+@rol.delete("/rol/{id}", response_model=schemas.schema_rol.Rol, tags=["Roles"])
+async def delete_rol(id: int, db: Session = Depends(get_db),
+    current_user: str = Depends(get_current_user)):
+    db_rol = crud.crud_rol.delete_rol(db=db, id=id)
+    if db_rol is None:
+        raise HTTPException(status_code=404, detail="El Rol no existe, no se pudo eliminar")
+    return db_rol
